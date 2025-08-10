@@ -7,9 +7,10 @@ import MessageInput from './components/Messageinput';
 import './App.css';
 
 // Single socket initialization
-const socket = io(process.env.REACT_APP_API_URL, {
-  transports: ['websocket'], // Force WebSocket for stability
+const socket = io("https://whatsapp-backend-rhrf.onrender.com", {
+  transports: ["websocket"],
 });
+
 
 function App() {
   const [chats, setChats] = useState([]);
