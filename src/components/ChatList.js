@@ -1,6 +1,6 @@
-import React from 'react';
-
 export default function ChatList({ chats, onSelect }) {
+  if (!Array.isArray(chats)) return <div>No chats available</div>;
+
   return (
     <div className="chat-list">
       {chats.map(chat => {

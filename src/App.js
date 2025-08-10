@@ -11,7 +11,6 @@ const socket = io("https://whatsapp-backend-rhrf.onrender.com", {
   transports: ["websocket"],
 });
 
-
 function App() {
   const [chats, setChats] = useState([]);
   const [messages, setMessages] = useState([]);
@@ -35,7 +34,19 @@ function App() {
 
   // Load conversations from backend
   useEffect(() => {
-    API.get('/conversations').then(res => setChats(res.data));
+    API.get('/conversations')
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setChats(res.data);
+        } else {
+          console.error("Unexpected conversations format:", res.data);
+          setChats([]);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching conversations:", err);
+        setChats([]);
+      });
   }, []);
 
   // Listen for incoming messages
@@ -61,10 +72,24 @@ function App() {
 
   const handleSelectChat = (wa_id) => {
     setActiveChat(wa_id);
-    API.get(`/conversations/${wa_id}`).then(res => setMessages(res.data));
+    API.get(`/conversations/${wa_id}`)
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setMessages(res.data);
+        } else {
+          console.error("Unexpected messages format:", res.data);
+          setMessages([]);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching messages:", err);
+        setMessages([]);
+      });
   };
 
   const handleSendMessage = (text) => {
+    if (!activeChat) return;
+
     const newMsg = {
       wa_id: activeChat,
       name: 'You',
@@ -73,6 +98,7 @@ function App() {
       status: 'sent'
     };
     socket.emit('sendMessage', newMsg);
+    setMessages(prev => [...prev, newMsg]); // Optimistic update
   };
 
   return (
