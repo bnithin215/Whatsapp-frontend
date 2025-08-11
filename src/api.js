@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://whatsapp-backend-rhrf.onrender.com',
+  baseURL: 'https://whatsapp-backend-rhrf.onrender.com/api',
 });
 
 export default API;
